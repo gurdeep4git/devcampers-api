@@ -2,6 +2,8 @@ const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db")
 const errorHandler = require("./middlewares/error-handler");
+const swaggerUI = require('swagger-ui-express');
+const swaggerSpec = require('./swagger/swagger-options');
 
 // load route files
 const bootcamps = require('./routes/bootcamps-route');
@@ -13,6 +15,9 @@ dotenv.config({path:'./config/config.env'})
 connectDB()
 
 const app = express()
+
+// Swagger docs
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 //query parser
 app.set('query parser', str => require('qs').parse(str));
