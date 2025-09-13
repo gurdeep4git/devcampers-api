@@ -1,6 +1,7 @@
 const swaggerJsDoc = require('swagger-jsdoc');
 const mongooseToSwagger = require('mongoose-to-swagger');
 const Bootcamp = require('../models/Bootcamp');
+const Course = require('../models/Course');
 
 
 const options = {
@@ -18,7 +19,8 @@ const options = {
     ],
     components:{
         schemas: {
-            Bootcamp: mongooseToSwagger(Bootcamp)
+            Bootcamp: mongooseToSwagger(Bootcamp),
+            Course:mongooseToSwagger(Course)
         }
     }
   },

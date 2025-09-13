@@ -7,6 +7,7 @@ const swaggerSpec = require('./swagger/swagger-options');
 
 // load route files
 const bootcamps = require('./routes/bootcamps-route');
+const courses = require('./routes/courses-router');
 
 //load env variables
 dotenv.config({path:'./config/config.env'})
@@ -27,6 +28,7 @@ app.use(express.json())
 
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps)
+app.use('/api/v1/courses', courses)
 
 
 //error handler

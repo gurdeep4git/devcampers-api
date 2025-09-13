@@ -21,7 +21,7 @@ exports.getBootcamps = async (req, res, next) => {
         queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
         
         // hit database with updated queryStr
-        query = Bootcamp.find(JSON.parse(queryStr));
+        query = Bootcamp.find(JSON.parse(queryStr)).populate('courses');
 
         //Select
         if(req.query.select){
@@ -75,7 +75,7 @@ exports.getBootcamps = async (req, res, next) => {
 // @access          Public    
 exports.getBootcamp = async (req, res, next) => {
     try {
-        const bootcamp = await Bootcamp.findById(req.params.id)
+        const bootcamp = await Bootcamp.findById(req.params.id).populate('courses')
 
         if(!bootcamp){
             // Pass error to middleware
@@ -137,11 +137,13 @@ exports.updateBootcamp = async (req, res, next) => {
 // @access          Private    
 exports.deleteBootcamp = async (req, res, next) => {
     try {
-        const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id)
+        const bootcamp = await Bootcamp.findById(req.params.id)
 
         if(!bootcamp){
             return next(new ApiError(404, `Bootcamp not found with id ${req.params.id}`))
         }
+
+        bootcamp.remove();
 
         res.status(200).json({
             success:true,

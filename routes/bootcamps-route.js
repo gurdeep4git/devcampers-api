@@ -6,8 +6,14 @@ const {
     updateBootcamp, 
     deleteBootcamp
 } = require("../controllers/bootcamps-controller");
+
+// Bring in the course router file
+const coursesRouter = require('./courses-router');
+
 const router = express.Router();
 
+// Re-route into other resource router
+router.use('/:bootcampId/courses', coursesRouter);
 
 /**
  * @swagger
