@@ -6,9 +6,12 @@ const {
     updateBootcamp, 
     deleteBootcamp
 } = require("../controllers/bootcamps-controller");
+const Bootcamp = require("../models/Bootcamp");
+const advanceResults = require("../middlewares/advance-results");
+const {protect, authorize} = require("../middlewares/auth");
 
 // Bring in the course router file
-const coursesRouter = require('./courses-router');
+const coursesRouter = require('./courses-route');
 
 const router = express.Router();
 
@@ -85,7 +88,7 @@ router.use('/:bootcampId/courses', coursesRouter);
  *                   items:
  *                     $ref: '#/components/schemas/Bootcamp'
  */
-router.route('/').get(getBootcamps)
+router.route('/').get(advanceResults(Bootcamp,'courses'), getBootcamps)
 
 /**
  * @swagger
@@ -117,7 +120,7 @@ router.route('/').get(getBootcamps)
  *       500:
  *         description: Server error
  */
-router.route('/').post(createBootcamp)
+router.route('/').post(protect, authorize('publisher','admin'), createBootcamp)
 
 
 /**
@@ -214,7 +217,7 @@ router.route('/:id').get(getBootcamp)
  *       500:
  *         description: Internal server error
  */
-router.route('/:id').put(updateBootcamp)
+router.route('/:id').put(protect, authorize('publisher','admin'), updateBootcamp)
 
 /**
  * @swagger
@@ -259,6 +262,6 @@ router.route('/:id').put(updateBootcamp)
  *       500:
  *         description: Internal server error
  */
-router.route('/:id').delete(deleteBootcamp)
+router.route('/:id').delete(protect, authorize('publisher','admin'), deleteBootcamp)
 
 module.exports = router

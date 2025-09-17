@@ -6,6 +6,10 @@ const {
     updateCourse,
     deleteCourse
 } = require("../controllers/courses-controller");
+const advanceResults = require("../middlewares/advance-results");
+const {protect, authorize} = require("../middlewares/auth");
+const Course = require("../models/Course");
+
 
 const router = express.Router({mergeParams:true});
 /**
@@ -74,7 +78,10 @@ const router = express.Router({mergeParams:true});
  *       500:
  *         description: Server error
  */
-router.route('/').get(getCourses);
+router.route('/').get(advanceResults(Course,{
+                path:'bootcamp',
+                select: 'name description'
+            }),getCourses);
 
 /**
  * @swagger
@@ -117,7 +124,7 @@ router.route('/').get(getCourses);
  *         description: Server error
  */
 
-router.route('/').post(createCourse);
+router.route('/').post(protect, authorize('publisher','admin'), createCourse);
 
 /**
  * @swagger
@@ -192,7 +199,7 @@ router.route('/:id').get(getCourse);
  *       500:
  *         description: Server error
  */
-router.route('/:id').put(updateCourse);
+router.route('/:id').put(protect, authorize('publisher','admin'), updateCourse);
 /**
  * @swagger
  * /courses/{id}:
@@ -227,7 +234,7 @@ router.route('/:id').put(updateCourse);
  *         description: Server error
  */
 
-router.route('/:id').delete(deleteCourse);
+router.route('/:id').delete(protect, authorize('publisher','admin'), deleteCourse);
 
 module.exports = router;
 

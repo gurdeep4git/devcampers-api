@@ -4,10 +4,12 @@ const connectDB = require("./config/db")
 const errorHandler = require("./middlewares/error-handler");
 const swaggerUI = require('swagger-ui-express');
 const swaggerSpec = require('./swagger/swagger-options');
+const cookieParser = require("cookie-parser");
 
 // load route files
 const bootcamps = require('./routes/bootcamps-route');
-const courses = require('./routes/courses-router');
+const courses = require('./routes/courses-route');
+const auth = require('./routes/auth-route');
 
 //load env variables
 dotenv.config({path:'./config/config.env'})
@@ -26,9 +28,13 @@ app.set('query parser', str => require('qs').parse(str));
 // Body parser
 app.use(express.json())
 
+//Cookie parser
+app.use(cookieParser())
+
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps)
 app.use('/api/v1/courses', courses)
+app.use('/api/v1/auth', auth)
 
 
 //error handler
