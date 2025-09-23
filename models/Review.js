@@ -30,7 +30,7 @@ const ReviewSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: true
-  }
+  }   
 });
 
 // Prevent user from submitting more than one review per bootcamp
@@ -59,12 +59,12 @@ ReviewSchema.statics.getAverageRating = async function(bootcampId) {
   }
 };
 
-// Call getAverageCost after save
+// Call getAverageRating after save
 ReviewSchema.post('save', function() {
   this.constructor.getAverageRating(this.bootcamp);
 });
 
-// Call getAverageCost before remove
+// Call getAverageRating before remove
 ReviewSchema.pre('remove', function() {
   this.constructor.getAverageRating(this.bootcamp);
 });

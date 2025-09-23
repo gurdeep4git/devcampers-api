@@ -51,6 +51,50 @@ exports.getMe = async (req,res,next) => {
         next(error)
     }
 }
+// @desccription    update user details
+// @route           PUT /api/v1/auth/update-details
+// @access          Private   
+exports.updateDetails = async (req,res,next) => {
+    try {
+        const user = await User.findByIdAndUpdate(req.user.id, {name:req.body.name, email:req.body.email}, {
+            new:true,
+            runValidators:true
+        });
+
+        res
+        .status(200)
+        .json({
+            success:true,
+            data:user
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+// @desccription    update user password
+// @route           PUT /api/v1/auth/update-password
+// @access          Private  
+exports.updatePassword = async (req,res,next) => {
+    try {
+        const user = await User.findById(req.user.id).select('+password');
+
+        //check the current password matches
+        const isMatch = await user.comparePassword(req.body.currentPassword);
+
+        if(!isMatch){
+            return next(new ApiError(401, `Invalid password`))
+        }
+
+        user.password = req.body.newPassword;
+
+        await user.save()
+
+        sendTokenResponse(user,200,res);
+
+    } catch (error) {
+        next(error)
+    }
+}
 
 const sendTokenResponse = (user, statusCode, res) => {
     const token = user.getSignedJWTToken();

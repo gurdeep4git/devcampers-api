@@ -12,11 +12,13 @@ const {protect, authorize} = require("../middlewares/auth");
 
 // Bring in the course router file
 const coursesRouter = require('./courses-route');
+const reviewsRouter = require('./reviews-route');
 
 const router = express.Router();
 
 // Re-route into other resource router
 router.use('/:bootcampId/courses', coursesRouter);
+router.use('/:bootcampId/reviews', reviewsRouter);
 
 /**
  * @swagger

@@ -53,11 +53,18 @@ exports.getCourse = async (req, res, next) => {
 exports.createCourse = async (req,res, next) => {
     try {
         req.body.bootcamp = req.params.bootcampId;
+        req.body.user = req.user.id;
 
         const bootcamp = await Bootcamp.findById(req.params.bootcampId);
 
         if(!bootcamp){
             return next(new ApiError(404, `Bootcamp not found with id ${req.params.bootcampId}`))
+        }
+
+        //Ownership
+        //If person who is adding the course is the owner or not
+        if(bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin'){
+            return next(new ApiError(401, `User ${req.user.id} is not authorized to add a course to bootcamp ${bootcamp._id}`))
         }
 
         const course = await Course.create(req.body);
@@ -76,14 +83,22 @@ exports.createCourse = async (req,res, next) => {
 // @access          Private    
 exports.updateCourse = async (req, res, next) => {
     try {
-        const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
-            new:true,
-            runValidators:true
-        })
+        let course = await Course.findById(req.params.id)
 
         if(!course){
             return next(new ApiError(404, `Course not found with id ${req.params.id}`))
         }
+
+        //Ownership
+        //If person who is adding the course is the owner or not
+        if(course.user.toString() !== req.user.id && req.user.role !== 'admin'){
+            return next(new ApiError(401, `User ${req.user.id} is not authorized to update a course ${course._id}`))
+        }
+
+        course = await Course.findByIdAndUpdate({ _id: req.params.id }, req.body, {
+            new:true,
+            runValidators:true
+        })
 
         res.status(200).json({
             success:true,
@@ -106,7 +121,13 @@ exports.deleteCourse = async (req, res, next) => {
             return next(new ApiError(404, `Course not found with id ${req.params.id}`))
         }
 
-        course.remove();
+        //Ownership
+        //If person who is adding the course is the owner or not
+        if(course.user.toString() !== req.user.id && req.user.role !== 'admin'){
+            return next(new ApiError(401, `User ${req.user.id} is not authorized to delete a course ${course._id}`))
+        }
+
+        await course.deleteOne();
 
         res.status(200).json({
             success:true,
