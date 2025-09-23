@@ -1,7 +1,11 @@
+const qs = require("qs");
+
 const advanceResults = (model, modelToPopulate) => async (req, res, next) => {
+    const parsedQuery = qs.parse(req._parsedUrl.query);
+    
     let query;
 
-    const queryObj = {...req.query}
+    const queryObj = {...parsedQuery}
 
     // remove keywords
     const removeFields = ['select', 'sort', 'page', 'limit'];

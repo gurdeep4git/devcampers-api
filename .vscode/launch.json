@@ -4,14 +4,15 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug via NPM (dev script)",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 5000,
+      "name": "Debug with Nodemon",
+      "runtimeExecutable": "nodemon",
+      "runtimeArgs": [
+        "--inspect",
+        "${workspaceFolder}/server.js"
+      ],
+      "restart": true,
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "restart": true,
-      "autoAttachChildProcesses": true,
       "env": {
         "NODE_ENV": "development"
       },
