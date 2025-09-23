@@ -106,7 +106,7 @@ exports.updateReview = async (req, res, next) => {
 // @desccription    delete review
 // @route           DELETE /api/v1/course/:id
 // @access          Private    
-exports.deleteCourse = async (req, res, next) => {
+exports.deleteReview = async (req, res, next) => {
     try {
         const review = await Review.findById(req.params.id)
 

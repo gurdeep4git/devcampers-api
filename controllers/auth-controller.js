@@ -37,6 +37,25 @@ exports.login = async (req,res,next) => {
     }
 }
 
+exports.logout = async (req,res,next) => {
+    try {
+        res.cookie('token','none', {
+            expires:new Date(Date.now() * 10 * 1000),
+            httpOnly:true
+        })
+        
+        res
+        .status(200)
+        .json({
+            success:true,
+            data:{}
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
 exports.getMe = async (req,res,next) => {
     try {
         const user = await User.findById(req.user.id);
